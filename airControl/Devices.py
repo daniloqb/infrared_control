@@ -320,18 +320,3 @@ class AirConditioner:
         self.__d_infraredCodes['code_hex'] = code_hex_r
         self.__d_infraredCodes['code_int'] = ' '.join((list_code_int))
         self.__d_infraredCodes['code_bin'] = ''.join(list_bin_r)
-
-
-york = AirConditioner(mode='cool', temp='24', fan='auto', sweep='off')
-
-york.info()
-print york.getIRCode()
-
-
-york.setSweep('on')
-print york.getIRCode()
-york.setStatus('off')
-print york.getIRCode()
-
-
-

@@ -6,9 +6,10 @@ from PyCRC.CRC16 import CRC16
 __author__ = 'tic'
 __version__ = '20151001'
 
+class Device:
+    pass
 
-
-class AirConditioner:
+class AirConditioner(Device):
     '''
     #Classe para gerenciamento do ar condicionado
     '''
@@ -320,3 +321,33 @@ class AirConditioner:
         self.__d_infraredCodes['code_hex'] = code_hex_r
         self.__d_infraredCodes['code_int'] = ' '.join((list_code_int))
         self.__d_infraredCodes['code_bin'] = ''.join(list_bin_r)
+
+
+        # fim da classe
+
+
+class ControllerDeviceCOM:
+
+    def __init__(self, device, port, baudrate):
+        #self.device = Device()
+        self.device = device
+        self.port = port
+        self.baudrate = baudrate
+
+    def execute(self):
+        code = self.device.getIRCode()
+        code = '3 ' + code
+
+
+        print 'Connecting to {} with baudrate {}'.format(self.port,self.baudrate)
+        comport = serial.Serial(self.port,self.baudrate)
+        time.sleep(1.8)
+
+        print('Sending code to device\n {}'.format(code))
+        comport.write(code)
+        time.sleep(0.5)
+        VALUE_SERIAL=comport.readline()
+        print '\nRetorno da serial: %s' % (VALUE_SERIAL)
+
+        comport.close()
+

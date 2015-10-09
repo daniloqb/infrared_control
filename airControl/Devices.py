@@ -1,3 +1,4 @@
+import socket
 import binascii
 import time
 import serial
@@ -351,3 +352,20 @@ class ControllerDeviceCOM:
 
         comport.close()
 
+class ControllerDeviceEthernet:
+    def __init__(self,device,hostname,port):
+        self.device = device
+        self.hostname = hostname
+        self.port = port
+
+    def execute(self):
+        code = self.device.getIRCode()
+        code +='\n\n\n'
+        print 'Connecting to {} on port {}'.format(self.hostname, self.port)
+        tcp = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+
+        tcp.connect((self.hostname,self.port))
+
+        tcp.send(code)
+
+        tcp.close()

@@ -6,15 +6,29 @@ __author__ = 'tic'
 york = AirConditioner(mode='cool', temp='24', fan='auto', sweep='off')
 
 york.info()
-print york.getIRCode()
+print
+york.setTemp('16')
+york.setStatus('on')
 
-controller = ControllerDeviceCOM(york,'/dev/ttyUSB0',9600)
+york.info()
+
+#york.setStatus('off')
+
+
+print york.getIRCode()
+print
+print york.getIRCode('bin')
+print york.getIRCode('hex')
+
+#controller = ControllerDeviceCOM(york,'/dev/ttyUSB0',9600)
+controller = ControllerDeviceEthernet(york,'143.106.230.104',80)
+
 
 controller.execute()
 
 
-#time.sleep(5)
+time.sleep(6)
 
-#york.setStatus('off')
+york.setStatus('off')
 
-#controller.execute()
+controller.execute()

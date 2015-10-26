@@ -14,9 +14,10 @@ dict_args = {
 
 args = sys.argv[1::]
 
-if args[0] == '-h' or args[0] == '--help':
-    print 'help'
-    exit()
+if (args):
+    if args[0] == '-h' or args[0] == '--help':
+        print 'help'
+        exit()
 
 for arg in  args:
    l = arg.split('=')

@@ -7,10 +7,11 @@ from PyCRC.CRC16 import CRC16
 __author__ = 'tic'
 __version__ = '20151001'
 
-class Device:
+class Device(object):
     pass
 
 class AirConditioner(Device):
+
     '''
     #Classe para gerenciamento do ar condicionado
     '''
@@ -159,6 +160,7 @@ class AirConditioner(Device):
     def setStatus(self, status):
         if self.__d_status.has_key(status):
             self.__d_airState['status'] = status
+
             self.__generateIRCode()
 
     def setMode(self, mode):
@@ -240,6 +242,8 @@ class AirConditioner(Device):
             return  self.__d_infraredCodes['code_bin']
         else:
             return None
+
+
 
     def __generateIRCode(self):
 
@@ -323,8 +327,16 @@ class AirConditioner(Device):
         self.__d_infraredCodes['code_int'] = ' '.join((list_code_int))
         self.__d_infraredCodes['code_bin'] = ''.join(list_bin_r)
 
-
-        # fim da classe
+    # Secao das propriedades
+    status   = property(getStatus,setStatus)
+    mode     = property(getMode,setMode)
+    temp     = property(getTemp,setTemp)
+    fan      = property(getFan,setFan)
+    act      = property(getAct,setAct)
+    sweep    = property(getSweep,setSweep)
+    offtimer = property(getOfftimer,setOfftimer)
+    ontimmer = property(getOntimer,setOntimer)
+    # fim da classe
 
 
 class ControllerDeviceCOM:

@@ -10,6 +10,25 @@ __version__ = '20151001'
 class Device(object):
     pass
 
+
+class LED(Device):
+
+    def __init__(self,status=0):
+        self.__status = status
+
+    def setStatus(self,status):
+        self.__status = status
+
+    def getStatus(self):
+        return self.__status
+
+    def getCode(self):
+        return '5 ' + str(self.__status)
+
+
+    status = property(getStatus,setStatus)
+
+
 class AirConditioner(Device):
 
     '''
@@ -233,9 +252,9 @@ class AirConditioner(Device):
     def getOntimer(self):
         return self.__d_airState['ontimer']
 
-    def getIRCode(self, type='int'):
+    def getCode(self, type='int'):
         if type == 'int':
-            return self.__d_infraredCodes['code_int']
+            return '2 ' + self.__d_infraredCodes['code_int']
         elif type == 'hex':
             return self.__d_infraredCodes['code_hex']
         elif type == 'bin':
@@ -348,9 +367,8 @@ class ControllerDeviceCOM:
         self.baudrate = baudrate
 
     def execute(self):
-        code = self.device.getIRCode()
-        code = '3 ' + code
-
+        code = self.device.getCode()
+        #code = '3 ' + code
 
         print 'Connecting to {} with baudrate {}'.format(self.port,self.baudrate)
         comport = serial.Serial(self.port,self.baudrate)
@@ -371,8 +389,12 @@ class ControllerDeviceEthernet:
         self.port = port
 
     def execute(self):
-        code = self.device.getIRCode()
+        code = self.device.getCode()
+       # code = '3 ' + self.device.getCode()
+        #code = self.device.getIRCode()
         code +='\n\n\n'
+
+
         print 'Connecting to {} on port {}'.format(self.hostname, self.port)
         tcp = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
@@ -380,4 +402,8 @@ class ControllerDeviceEthernet:
 
         tcp.send(code)
 
+        st = tcp.recv(1024)
+        while (st):
+            print st
+            st = tcp.recv(1024)
         tcp.close()

@@ -2,6 +2,7 @@ import socket
 import binascii
 import time
 import serial
+import simplejson as json
 from PyCRC.CRC16 import CRC16
 
 __author__ = 'tic'
@@ -261,6 +262,16 @@ class AirConditioner(Device):
             return  self.__d_infraredCodes['code_bin']
         else:
             return None
+    def getJsonCode(self):
+        l = []
+        s = self.__d_infraredCodes['code_int']
+        for val in s.split(" "):
+            l.append(val)
+
+        d = {"york": l}
+
+        return json.dumps(d)
+
 
 
 
@@ -367,7 +378,7 @@ class ControllerDeviceCOM:
         self.baudrate = baudrate
 
     def execute(self):
-        code = self.device.getCode()
+        code = self.device.getJsonCode()
         #code = '3 ' + code
 
         print 'Connecting to {} with baudrate {}'.format(self.port,self.baudrate)

@@ -7,7 +7,8 @@ york = AirConditioner(mode='normal', temp='24', fan='auto', sweep='off')
 
 
 print york.getCode()
-print york.getJsonCode()
+print york.getJsonCode();
+
 print
 print york.getCode('bin')
 print york.getCode('hex')
@@ -25,4 +26,5 @@ time.sleep(3)
 
 #crtlLed.execute()
 york.status = 'off'
-controller.execute()
+#controller.execute()
+

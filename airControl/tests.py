@@ -7,7 +7,6 @@ york = AirConditioner(mode='normal', temp='24', fan='auto', sweep='off')
 
 
 print york.getCode()
-print york.getJsonCode()
 print
 print york.getCode('bin')
 print york.getCode('hex')

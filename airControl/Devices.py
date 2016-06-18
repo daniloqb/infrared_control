@@ -269,6 +269,7 @@ class AirConditioner(Device):
             l.append(val)
 
         d = {"york": l}
+        d["state"] = "all"
 
         return json.dumps(d)
 

@@ -5,24 +5,27 @@ __author__ = 'tic'
 
 york = AirConditioner(mode='normal', temp='24', fan='auto', sweep='off')
 
+nec = DatashowNEC();
+nec.powerOn()
 
 print york.getCode()
 print york.getJsonCode()
 print
-print york.getCode('bin')
-print york.getCode('hex')
 print york.info()
+print
+print nec.getJsonCode()
 
-#controller = ControllerDeviceEthernet(york,'143.106.230.104',80)
-#controller.execute()
-
-
-controller = ControllerDeviceCOM(york,'/dev/ttyUSB0',9600)
+controller = ControllerDeviceCOMJson(york,'/dev/ttyACM0',9600)
+controllerNEC = ControllerDeviceCOMJson(nec,'/dev/ttyACM0',9600)
 
 
 time.sleep(3)
 
-
-#crtlLed.execute()
 york.status = 'off'
-controller.execute()
+#controller.execute()
+controllerNEC.execute()
+
+time.sleep(10)
+
+nec.powerOff()
+controllerNEC.execute()

@@ -30,6 +30,31 @@ class LED(Device):
     status = property(getStatus,setStatus)
 
 
+class DatashowNEC(Device):
+    __POWER_ON  = 0x189710EF
+    __POWER_OFF = 0x189728D7
+
+
+
+    def __init__(self):
+        self.__infrared_code = 0
+
+    def powerOn(self):
+        self.__infrared_code = str(self.__POWER_ON)
+
+    def powerOff(self):
+        self.__infrared_code = str(self.__POWER_OFF)
+
+    def getJsonCode(self):
+
+        d = dict()
+        d['nec'] = self.__infrared_code
+        return d
+
+
+
+
+
 class AirConditioner(Device):
 
     '''
@@ -269,10 +294,10 @@ class AirConditioner(Device):
             l.append(val)
 
         d = {"york": l}
-        d["state"] = "all"
+        #d["state"] = "all"
 
-        return json.dumps(d)
-
+        #return json.dumps(d)
+        return d
 
 
 
@@ -383,7 +408,34 @@ class ControllerDeviceCOM:
         #code = '3 ' + code
 
         print 'Connecting to {} with baudrate {}'.format(self.port,self.baudrate)
-        comport = serial.Serial(self.port,self.baudrate)
+        comport = serial.Serial(self.port, self.baudrate)
+        time.sleep(1.8)
+
+        print('Sending code to device\n {}'.format(code))
+        comport.write(code)
+        time.sleep(0.5)
+        VALUE_SERIAL=comport.readline()
+        print '\nRetorno da serial: %s' % (VALUE_SERIAL)
+
+        comport.close()
+
+
+
+class ControllerDeviceCOMJson:
+
+    def __init__(self, device, port, baudrate):
+        #self.device = Device()
+        self.device = device
+        self.port = port
+        self.baudrate = baudrate
+
+    def execute(self):
+        d = dict()
+        d = self.device.getJsonCode()
+        code = json.dumps(d)
+
+        print 'Connecting to {} with baudrate {}'.format(self.port,self.baudrate)
+        comport = serial.Serial(self.port, self.baudrate, timeout=10)
         time.sleep(1.8)
 
         print('Sending code to device\n {}'.format(code))

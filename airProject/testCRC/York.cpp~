@@ -1,0 +1,57 @@
+#include "Arduino.h"
+#include "York.h"
+
+York::York(){
+
+  status[0]=HEADER_1;
+  status[1]=HEADER_2;
+  status[2]=HEADER_3;
+  status[3]=HEADER_4;
+  status[4]=HEADER_5;
+  status[5]=HEADER_6;
+  status[6]=ACT_NORMAL;
+  status[7]=STATUS_ON+FAN_AUTO;
+  status[8]=MODE_COOL;
+  status[9]=TEMP_25;
+  status[10]=ON_TIME;
+  status[11]=OFF_TIME;
+  status[12]=BYTE_13;
+  status[13]=SWEEP_OFF;
+    
+  };
+
+
+  
+
+void York::updateCRC(){
+    
+  unsigned short crc_calc = 0;
+
+  for(int i=0;i<14;i++){
+    crc_calc = update_crc_16(crc_calc, status[i]);
+  }
+  status[14] = FOOTER;
+  status[15] = crc_calc & 0x00FF;
+  status[16] = (crc_calc & 0xFF00) >> 8;   
+    
+}
+
+
+void York::getStatus(){
+
+   for (int i=0; i <17;i++){
+
+    Serial.println(status[i],HEX);
+    
+    }
+  
+  }
+
+unsigned char *York::getIRCode(){
+
+  updateCRC();
+
+  return status; 
+  
+  }
+

@@ -1,0 +1,87 @@
+#include "Arduino.h"
+
+#ifndef York_h
+#define York_h
+
+
+#include "lib_crc.c"
+
+
+
+class York{
+  const unsigned char ACT_NORMAL   = 0x01;
+  const unsigned char ACT_CLEAR    = 0x07;
+  const unsigned char ACT_FILTER   = 0x0F;
+  const unsigned char ACT_SLEEP    = 0x08;
+  const unsigned char ACT_OFFTIMER = 0x26;
+  const unsigned char ACT_ONTIMER  = 0x36;
+
+  const unsigned char STATUS_ON    = 0x10;
+  const unsigned char STATUS_OFF   = 0x00;
+
+  const unsigned char FAN_AUTO     = 0x08;
+  const unsigned char FAN_1        = 0x01;
+  const unsigned char FAN_2        = 0x02;
+  const unsigned char FAN_3        = 0x03;
+
+  const unsigned char MODE_COOL    = 0x02;
+  const unsigned char MODE_DRY     = 0x03;
+  const unsigned char MODE_FAN     = 0x04;
+
+  const unsigned char SWEEP_ON     = 0x01;
+  const unsigned char SWEEP_OFF    = 0x00;
+
+
+  const unsigned char TEMP_16      = 0x40;
+  const unsigned char TEMP_17      = 0x44;
+  const unsigned char TEMP_18      = 0x48;
+  const unsigned char TEMP_19      = 0x4c;
+  const unsigned char TEMP_20      = 0x50;
+  const unsigned char TEMP_21      = 0x54;
+  const unsigned char TEMP_22      = 0x58;
+  const unsigned char TEMP_23      = 0x5c;
+  const unsigned char TEMP_24      = 0x60;
+  const unsigned char TEMP_25      = 0x64;
+  const unsigned char TEMP_26      = 0x68;
+  const unsigned char TEMP_27      = 0x6c;
+  const unsigned char TEMP_28      = 0x70;
+  const unsigned char TEMP_29      = 0x74;
+  const unsigned char TEMP_30      = 0x78;
+  const unsigned char TEMP_31      = 0x7c;
+  const unsigned char TEMP_32      = 0x80;
+
+  const unsigned char OFF_TIME     = 0x00;
+  const unsigned char ON_TIME      = 0x00;
+
+
+
+
+  const unsigned char HEADER_1     = 0x08;
+  const unsigned char HEADER_2     = 0x10;
+  const unsigned char HEADER_3     = 0x07;
+  const unsigned char HEADER_4     = 0x02;
+  const unsigned char HEADER_5     = 0x40;
+  const unsigned char HEADER_6     = 0x08;
+
+  const unsigned char FOOTER       = 0xEC;
+
+  const unsigned char BYTE_13      = 0x00;
+
+
+  private:
+    unsigned char status[17];
+    void updateCRC();
+    
+  
+  public:
+    York(); 
+    York(unsigned char temp);
+    void getStatus();
+    unsigned char *getIRCode();
+
+     
+  };
+
+
+
+#endif

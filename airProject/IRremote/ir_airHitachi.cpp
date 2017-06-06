@@ -1,0 +1,163 @@
+/*
+Assuming the protocol we are adding is for the (imaginary) manufacturer:  Shuzu
+
+Our fantasy protocol is a standard protocol, so we can use this standard
+template without too much work. Some protocols are quite unique and will require
+considerably more work in this file! It is way beyond the scope of this text to
+explain how to reverse engineer "unusual" IR protocols. But, unless you own an
+oscilloscope, the starting point is probably to use the rawDump.ino sketch and
+try to spot the pattern!
+
+Before you start, make sure the IR library is working OK:
+  # Open up the Arduino IDE
+  # Load up the rawDump.ino example sketch
+  # Run it
+
+Now we can start to add our new protocol...
+
+1. Copy this file to : ir_Shuzu.cpp
+
+2. Replace all occurrences of "Shuzu" with the name of your protocol.
+
+3. Tweak the #defines to suit your protocol.
+
+4. If you're lucky, tweaking the #defines will make the default send() function
+   work.
+
+5. Again, if you're lucky, tweaking the #defines will have made the default
+   decode() function work.
+
+You have written the code to support your new protocol!
+
+Now you must do a few things to add it to the IRremote system:
+
+1. Open IRremote.h and make the following changes:
+   REMEMEBER to change occurences of "SHUZU" with the name of your protocol
+
+   A. At the top, in the section "Supported Protocols", add:
+      #define DECODE_SHUZU  1
+      #define SEND_SHUZU    1
+
+   B. In the section "enumerated list of all supported formats", add:
+      SHUZU,
+      to the end of the list (notice there is a comma after the protocol name)
+
+   C. Further down in "Main class for receiving IR", add:
+      //......................................................................
+      #if DECODE_SHUZU
+          bool  decodeShuzu (decode_results *results) ;
+      #endif
+
+   D. Further down in "Main class for sending IR", add:
+      //......................................................................
+      #if SEND_SHUZU
+          void  sendShuzu (unsigned long data,  int nbits) ;
+      #endif
+
+   E. Save your changes and close the file
+
+2. Now open irRecv.cpp and make the following change:
+
+   A. In the function IRrecv::decode(), add:
+      #ifdef DECODE_NEC
+          DBG_PRINTLN("Attempting Shuzu decode");
+          if (decodeShuzu(results))  return true ;
+      #endif
+
+   B. Save your changes and close the file
+
+You will probably want to add your new protocol to the example sketch
+
+3. Open MyDocuments\Arduino\libraries\IRremote\examples\IRrecvDumpV2.ino
+
+   A. In the encoding() function, add:
+      case SHUZU:    Serial.print("SHUZU");     break ;
+
+Now open the Arduino IDE, load up the rawDump.ino sketch, and run it.
+Hopefully it will compile and upload.
+If it doesn't, you've done something wrong. Check your work.
+If you can't get it to work - seek help from somewhere.
+
+If you get this far, I will assume you have successfully added your new protocol
+There is one last thing to do.
+
+1. Delete this giant instructional comment.
+
+2. Send a copy of your work to us so we can include it in the library and
+   others may benefit from your hard work and maybe even write a song about how
+   great you are for helping them! :)
+
+Regards,
+  BlueChip
+*/
+
+#include "IRremote.h"
+#include "IRremoteInt.h"
+
+//==============================================================================
+//
+//
+//                              S H U Z U
+//
+//
+//==============================================================================
+
+#define AIRHITACHI_HDR_MARK	9000
+#define AIRHITACHI_HDR_SPACE	4500
+#define AIRHITACHI_BIT_MARK	560
+#define AIRHITACHI_ONE_SPACE	1700
+#define AIRHITACHI_ZERO_SPACE	600
+#define AIRHITACHI_TOPBIT 0x80
+#define AIRHITACHI_LASTBYTE 0x08
+
+
+
+//+=============================================================================
+//
+#if SEND_AIRHITACHI
+
+void IRsend::sendAirHitachi(unsigned char IRcode[], int nbits)
+{
+
+  enableIROut(38);
+  mark(AIRHITACHI_HDR_MARK);
+  space(AIRHITACHI_HDR_SPACE);
+
+for (int j = 0; j<5; j++){
+  
+   for (int i = 0; i < nbits; i++) {
+    if (IRcode[j] & AIRHITACHI_TOPBIT) {
+      mark(AIRHITACHI_BIT_MARK);
+      space(AIRHITACHI_ONE_SPACE);
+    } 
+    else {
+      mark(AIRHITACHI_BIT_MARK);
+      space(AIRHITACHI_ZERO_SPACE);
+    }
+    IRcode[j] <<= 1;
+  }//end for i 
+
+}//for j
+
+
+// Send the checksum
+   for (int i = 0; i < 4; i++) {
+    if (IRcode[5] & AIRHITACHI_LASTBYTE) {
+      mark(AIRHITACHI_BIT_MARK);
+      space(AIRHITACHI_ONE_SPACE);
+    } 
+    else {
+      mark(AIRHITACHI_BIT_MARK);
+      space(AIRHITACHI_ZERO_SPACE);
+    }
+    IRcode[5] <<= 1;
+  }//end for i 
+
+
+  mark(AIRHITACHI_BIT_MARK);
+  space(0);
+  
+  } //sendAirHitachi
+
+#endif
+

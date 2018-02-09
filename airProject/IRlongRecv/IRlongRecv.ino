@@ -2,6 +2,13 @@
 Author: AnalysIR
 Revision: 1.0
 
+Revision 2.0
+Modified by: Danilo Queiroz Barbosa
+2018-02-09
+
+** This revision intent to format the output, 
+* leaving the output right just to put on the sketch.
+
 This code is provided to overcome an issue with Arduino IR libraries
 It allows you to capture raw timings for signals longer than 255 marks & spaces.
 Typical use case is for long Air conditioner signals.
@@ -48,15 +55,19 @@ void loop() {
   if (x) { //if a signal is captured
     digitalWrite(LEDPIN, HIGH);//visual indicator that signal received
     Serial.println();
-    Serial.print(F("Raw: (")); //dump raw header format - for library
+//    Serial.print(F("Raw: (")); //dump raw header format - for library
+    Serial.print(F("unsigned int raw["));
     Serial.print((x - 1));
-    Serial.print(F(") "));
+//    Serial.print(F(") "));
+    Serial.print(F("] = {"));
     detachInterrupt(0);//stop interrupts & capture until finshed here
     for (int i = 1; i < x; i++) { //now dump the times
-      if (!(i & 0x1)) Serial.print(F("-"));
+      //if (!(i & 0x1)) Serial.print(F("-"));
       Serial.print(irBuffer[i] - irBuffer[i - 1]);
-      Serial.print(F(", "));
+      if( i < x-1)
+        Serial.print(F(", "));
     }
+    Serial.print(F("};"));
     x = 0;
     Serial.println();
     Serial.println();
